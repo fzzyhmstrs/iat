@@ -12,6 +12,11 @@ version = modVersion
 val mavenGroup: String by project
 group = mavenGroup
 repositories {
+
+    flatDir {
+        dirs("F:\\Documents\\Mod Development\\ai\\build\\libs")
+    }
+
 }
 dependencies {
     val minecraftVersion: String by project
@@ -24,6 +29,8 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricVersion")
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinVersion")
+
+    modImplementation(":amethyst_imbuement-1.18.2-03")
 }
 tasks {
     val javaVersion = JavaVersion.VERSION_17
