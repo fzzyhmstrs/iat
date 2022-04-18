@@ -23,3 +23,11 @@ The *Amethyst Imbuement* in-game guide book (the "Glistering Tome") contains bri
 **Wit**: Magic of guile, trickery, and creativity. Use with enchantments that provide unique effects such as teleportation, item drops, experience modififcation, etc.
 
 **Grace**: Magic of healing, protection, and growth. Use with enchantments that provide defensive or healing buffs, or do something like speed up crop growth or summon helpful creatures (non-aggressive).
+
+|Tier|Fury|Wit|Grace|Any|
+|----|----|---|-----|---|
+|1|Amethyst Shard|Danburite|Imbued Quartz|x|
+|1|Citrine|Imbued Lapis|Smoky Quartz|x|
+|2|Garnet|Pyrite|Moonstone|Opal|
+|3|x|x|x|Ametrine|
+|4|x|x|x|Celestine|
