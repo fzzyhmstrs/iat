@@ -1,9 +1,8 @@
 {
   "required": true,
-  "package": "me.fzzyhmstrs.village_life.mixins",
+  "package": "me.fzzyhmstrs.imbuing_automation_tool.mixins",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "StructurePoolsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

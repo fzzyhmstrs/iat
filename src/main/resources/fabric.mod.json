@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "village_life",
+  "id": "imbuing_automation_tool",
   "version": "${version}",
-  "name": "Village Life",
-  "description": "A mod all about bringing more life to villages! New structures, professions, and mobs!",
+  "name": "Imbuing Automation Tool",
+  "description": "Automates generation of recipes for vanilla-style enchantments",
   "authors": [
     "fzzyhmstrs"
   ],
@@ -13,7 +13,7 @@
     "sources": "https://example.com/"
   },
   "license": "MIT License",
-  "icon": "assets/village_life/icon.png",
+  "icon": "assets/imbuing_automation_tool/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
