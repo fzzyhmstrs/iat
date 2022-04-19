@@ -19,7 +19,7 @@
     "main": [
       {
         "adapter": "kotlin",
-        "value": "me.fzzyhmstrs.village_life.VL"
+        "value": "me.fzzyhmstrs.imbuing_automation_tool.IAT"
       }
     ]
   },

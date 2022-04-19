@@ -30,7 +30,7 @@ dependencies {
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinVersion")
 
-    modImplementation(":amethyst_imbuement-1.18.2-03")
+    modImplementation(":amethyst_imbuement-1.18.2-06")
 }
 tasks {
     val javaVersion = JavaVersion.VERSION_17

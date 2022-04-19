@@ -8,7 +8,9 @@ import me.fzzyhmstrs.amethyst_imbuement.registry.RegisterItem
 import me.fzzyhmstrs.amethyst_imbuement.scepter.base_augments.ScepterAugment
 import me.fzzyhmstrs.amethyst_imbuement.util.ImbuingRecipeFormat
 import me.fzzyhmstrs.amethyst_imbuement.util.ScepterObject
+import me.fzzyhmstrs.imbuing_automation_tool.IAT
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
 import net.minecraft.item.Item
 import net.minecraft.item.Items
 import net.minecraft.recipe.Ingredient
@@ -26,11 +28,12 @@ object ImbuingRecipeGenerator {
 
     private fun generateRecipes(){
 
+        var generatedRecipes = 0
+
         Registry.ENCHANTMENT.ids.forEach { id: Identifier ->
             val enchant = Registry.ENCHANTMENT[id]
             if (enchant != null){
                 if (enchant !is BaseAugment && enchant !is ScepterAugment) {
-
                     val target = enchant.type
                     val itemList: MutableList<Item> = mutableListOf()
                     val gemList: Pair<Pair<Item, Item>,Item> = try {
@@ -47,8 +50,8 @@ object ImbuingRecipeGenerator {
                     val maxModLevel = enchant.getMaxPower(maxLevel)
                     val decision = decider(weight,maxModLevel,maxLevel)
 
-                    val rnd = Random(124).nextInt(2)
-                    val rnd2 = Random(124).nextInt(4)
+                    val rnd = IAT.iatRandom.nextInt(2)
+                    val rnd2 = IAT.iatRandom.nextInt(4)
                     val gemPair = GemPair(rnd,gemList.first)
                     val gem1 = gemPair.gem
                     val gem2 =
@@ -64,42 +67,50 @@ object ImbuingRecipeGenerator {
 
                     val cost = decision.first * decision.second
 
-                    val rnd3 = Random(124).nextInt(itemList.size)
+                    val rnd3 = IAT.iatRandom.nextInt(itemList.size)
                     val component1 = itemList[rnd3]
 
                     val recipe = if (decision.first == 8){
-                        val rnd4 = Random(124).nextInt(2)
+                        val rnd4 = IAT.iatRandom.nextInt(2)
                         val component2 = if (rnd4 == 0){
                             null
                         } else {
-                            val rnd5 = Random(124).nextInt(itemList.size)
+                            val rnd5 = IAT.iatRandom.nextInt(itemList.size)
                             itemList[rnd5]
                         }
+                        println(component2)
                         writeEightIngredientRecipe(id,cost,component1,component2,gem1,gem2)
                     } else {
                         writeFourIngredientRecipe(id,cost,component1,gem1,gem2)
                     }
 
-                    writeToJson(id.path+".json",recipe)
+                    if (writeToJson(id.path+".json",recipe)){
+                        generatedRecipes++
+                    }
+
                 }
             }
         }
+        MinecraftClient.getInstance().player?.sendChatMessage("Generated $generatedRecipes imbuing recipes into the config folder.")
     }
 
-    private fun writeToJson(fileName: String, recipe: ImbuingRecipeFormat){
-        val dir = File(FabricLoader.getInstance().configDir.toFile(), "amethyst_imbuement")
+    private fun writeToJson(fileName: String, recipe: ImbuingRecipeFormat): Boolean{
+        val dir = File(File(FabricLoader.getInstance().configDir.toFile(), "amethyst_imbuement"),"imbuing_recipes")
         if (!dir.exists() && !dir.mkdirs()) {
             println("Couldn't make config directory!")
         }
         val f = File(dir,fileName)
-        try{
+        return try{
             if (!f.createNewFile()){
                 println("Couldn't generate new imbuing recipe or already exists: $fileName")
+                false
             } else {
                 f.writeText(gson.toJson(recipe))
+                true
             }
         } catch (e: Exception) {
             println("Failed to write file: $fileName")
+            false
         }
     }
 
@@ -200,7 +211,10 @@ object ImbuingRecipeGenerator {
                     Items.COBBLESTONE,
                     Items.GRANITE,
                     Items.SHIELD,
-                    Items.GOLDEN_APPLE
+                    Items.GOLDEN_APPLE,
+                    Items.GHAST_TEAR,
+                    Items.BRICK,
+                    Items.BONE_BLOCK
                 )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
@@ -215,7 +229,9 @@ object ImbuingRecipeGenerator {
                     Items.SLIME_BALL,
                     Items.REDSTONE_BLOCK,
                     Items.BAMBOO,
-                    Items.WHITE_WOOL
+                    Items.WHITE_WOOL,
+                    Items.GLISTERING_MELON_SLICE,
+                    Items.RABBIT_HIDE
                 )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
@@ -229,7 +245,10 @@ object ImbuingRecipeGenerator {
                     RegisterItem.STEEL_INGOT,
                     RegisterItem.BERYL_COPPER_INGOT,
                     Items.REDSTONE_BLOCK,
-                    Items.OBSIDIAN
+                    Items.OBSIDIAN,
+                    Items.GHAST_TEAR,
+                    Items.BRICK,
+                    Items.BONE_BLOCK
                 )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
@@ -244,7 +263,10 @@ object ImbuingRecipeGenerator {
                     Items.OBSIDIAN,
                     Items.COBBLESTONE,
                     Items.GRANITE,
-                    Items.ACACIA_LOG
+                    Items.ACACIA_LOG,
+                    Items.BEEF,
+                    Items.GOLDEN_APPLE,
+                    Items.BONE_BLOCK
                 )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
@@ -255,6 +277,13 @@ object ImbuingRecipeGenerator {
             override fun itemList(): List<Item> {
                 return listOf(
                     Items.IRON_INGOT,
+                    Items.GLOWSTONE,
+                    Items.CRYING_OBSIDIAN,
+                    Items.BAMBOO,
+                    Items.LEATHER,
+                    Items.ENDER_EYE,
+                    Items.GLISTERING_MELON_SLICE,
+                    Items.GLOW_INK_SAC
                 )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
@@ -263,7 +292,18 @@ object ImbuingRecipeGenerator {
         },
         WEAPON{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.QUARTZ,
+                    Items.IRON_INGOT,
+                    RegisterItem.BERYL_COPPER_INGOT,
+                    Items.FIRE_CHARGE,
+                    Items.BLAZE_POWDER,
+                    Items.IRON_SWORD,
+                    Items.FLINT,
+                    Items.MAGMA_BLOCK,
+                    RegisterItem.STEEL_INGOT,
+                    Items.GOLDEN_CARROT
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return furyGemList
@@ -271,7 +311,15 @@ object ImbuingRecipeGenerator {
         },
         DIGGER{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.AMETHYST_SHARD,
+                    Items.IRON_INGOT,
+                    Items.REDSTONE_BLOCK,
+                    Items.EXPERIENCE_BOTTLE,
+                    Items.DIAMOND,
+                    Items.BOOK,
+                    Items.GLISTERING_MELON_SLICE
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return witGemList
@@ -279,7 +327,14 @@ object ImbuingRecipeGenerator {
         },
         FISHING_ROD{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.PUFFERFISH,
+                    Items.PRISMARINE_SHARD,
+                    Items.RABBIT_FOOT,
+                    Items.BAMBOO,
+                    Items.SEA_PICKLE,
+                    Items.GLISTERING_MELON_SLICE
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return witGemList
@@ -287,7 +342,15 @@ object ImbuingRecipeGenerator {
         },
         TRIDENT{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.EMERALD,
+                    Items.PRISMARINE_SHARD,
+                    Items.NAUTILUS_SHELL,
+                    RegisterItem.BERYL_COPPER_INGOT,
+                    Items.FLINT,
+                    Items.SEA_PICKLE,
+                    Items.PACKED_ICE
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return furyGemList
@@ -295,7 +358,14 @@ object ImbuingRecipeGenerator {
         },
         BREAKABLE{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.OBSIDIAN,
+                    Items.IRON_INGOT,
+                    RegisterItem.STEEL_INGOT,
+                    Items.DIAMOND,
+                    Items.SOUL_SAND,
+                    Items.CHAIN
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return graceGemList
@@ -303,7 +373,19 @@ object ImbuingRecipeGenerator {
         },
         BOW{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.FLINT,
+                    RegisterItem.CITRINE,
+                    Items.QUARTZ,
+                    Items.DIAMOND,
+                    Items.ARROW,
+                    Items.SPECTRAL_ARROW,
+                    Items.FIRE_CHARGE,
+                    Items.BLAZE_POWDER,
+                    Items.ENDER_PEARL,
+                    Items.GOLDEN_CARROT,
+                    Items.TARGET
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return furyGemList
@@ -311,15 +393,55 @@ object ImbuingRecipeGenerator {
         },
         WEARABLE{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(Items.IRON_INGOT,
+                    RegisterItem.STEEL_INGOT,
+                    Items.OBSIDIAN,
+                    Items.COBBLESTONE,
+                    Items.GRANITE,
+                    Items.SHIELD,
+                    Items.GOLDEN_APPLE,
+                    Items.GHAST_TEAR,
+                    Items.BRICK,
+                    Items.BONE_BLOCK,
+                    Items.RABBIT_FOOT,
+                    Items.GOLDEN_CARROT,
+                    Items.GLISTERING_MELON_SLICE,
+                    Items.GOLD_INGOT,
+                    Items.DIAMOND,
+                    Items.EMERALD,
+                    RegisterItem.BERYL_COPPER_INGOT,
+                    RegisterItem.IMBUED_LAPIS,
+                    RegisterItem.SMOKY_QUARTZ
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
-                return graceGemList
+                val list = when(Random(124).nextInt(3)){
+                    0 -> {
+                        furyGemList}
+                    1 -> {
+                        witGemList}
+                    2 -> {
+                        graceGemList}
+                    else -> {
+                        furyGemList}
+                }
+                return list
             }
         },
         CROSSBOW{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.FLINT,
+                    RegisterItem.CITRINE,
+                    Items.QUARTZ,
+                    RegisterItem.BERYL_COPPER_INGOT,
+                    Items.ARROW,
+                    Items.MAGMA_CREAM,
+                    Items.BLAZE_ROD,
+                    Items.ENDER_PEARL,
+                    Items.GOLDEN_CARROT,
+                    Items.TARGET
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return furyGemList
@@ -327,7 +449,13 @@ object ImbuingRecipeGenerator {
         },
         VANISHABLE{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.OBSIDIAN,
+                    Items.IRON_INGOT,
+                    RegisterItem.STEEL_INGOT,
+                    Items.DIAMOND,
+                    Items.GHAST_TEAR
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return graceGemList
@@ -335,7 +463,9 @@ object ImbuingRecipeGenerator {
         },
         GENERIC{
             override fun itemList(): List<Item> {
-                return listOf(Items.AIR)
+                return listOf(
+                    Items.STICK
+                )
             }
             override fun gemList(): Pair<Pair<Item,Item>, Item> {
                 return witGemList
