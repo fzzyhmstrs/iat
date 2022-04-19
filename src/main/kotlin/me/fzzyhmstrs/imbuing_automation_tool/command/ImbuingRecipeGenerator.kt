@@ -3,6 +3,7 @@ package me.fzzyhmstrs.imbuing_automation_tool.command
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.mojang.brigadier.Command
+import me.fzzyhmstrs.amethyst_imbuement.AI
 import me.fzzyhmstrs.amethyst_imbuement.augment.base_augments.BaseAugment
 import me.fzzyhmstrs.amethyst_imbuement.registry.RegisterItem
 import me.fzzyhmstrs.amethyst_imbuement.scepter.base_augments.ScepterAugment
@@ -95,7 +96,7 @@ object ImbuingRecipeGenerator {
     }
 
     private fun writeToJson(fileName: String, recipe: ImbuingRecipeFormat): Boolean{
-        val dir = File(File(FabricLoader.getInstance().configDir.toFile(), "amethyst_imbuement"),"imbuing_recipes")
+        val dir = File(File(FabricLoader.getInstance().configDir.toFile(), AI.MOD_ID),"imbuing_recipes")
         if (!dir.exists() && !dir.mkdirs()) {
             println("Couldn't make config directory!")
         }
