@@ -2,7 +2,7 @@
 
 ### This is a tool for use with [Amethyst Imbuement](https://www.curseforge.com/minecraft/mc-mods/amethyst-imbuement), and requires *AI* to be included in order to function.
 
-A tool for modpack developers or other users that want imbuing recipes for all vanilla style enchantments that don't already have an imbuing recipe. Recipes are generated via command and saved to the config folder, where the user can modify them and move them to a datapack as needed.
+A tool for modpack developers or other users that want imbuing recipes for all vanilla style enchantments that don't already have an imbuing recipe. Recipes are generated via command and saved to the config folder (config > amethyst_imbuement > imbuing_recipes), where the user can modify them and move them to a datapack as needed.
 
 Recipe generation is semi-randomized, with general selections made based on the enchantment targets as well as the level requirements of the enchantment.
 
